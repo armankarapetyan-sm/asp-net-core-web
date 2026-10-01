@@ -1,0 +1,75 @@
+body {
+  margin: 0;
+  background: #0b1220;
+  color: #d1d5db;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.frame { padding: 28px; max-width: 52rem; }
+
+.frame header {
+  display: flex;
+  gap: 16px;
+  align-items: baseline;
+  border-bottom: 1px dashed #334155;
+  padding-bottom: 14px;
+  margin-bottom: 24px;
+  color: #e2e8f0;
+}
+
+.frame header a {
+  color: #38bdf8;
+  text-decoration: none;
+}
+
+.item {
+  border-left: 2px solid #38bdf8;
+  padding: 10px 14px;
+  margin: 10px 0;
+  background: #111827;
+}
+
+.box {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 360px;
+  margin-top: 28px;
+}
+
+.box input {
+  background: #111827;
+  border: 1px solid #334155;
+  color: #e5e7eb;
+  padding: 10px;
+  font: inherit;
+}
+
+.box button {
+  background: #0369a1;
+  color: #fff;
+  border: 0;
+  padding: 10px;
+  cursor: pointer;
+  font: inherit;
+}
+
+.dim { color: #64748b; font-size: 13px; }
+
+#blazor-error-ui {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 12px 16px;
+  background: #7f1d1d;
+  color: #fecaca;
+}
+
+#blazor-error-ui.show { display: block; }
+
+#blazor-error-ui .dismiss {
+  cursor: pointer;
+  margin-left: 12px;
+}

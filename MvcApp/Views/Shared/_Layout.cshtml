@@ -1,0 +1,22 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] — MVC</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <header class="site-header">
+        <strong>MVC</strong>
+        <nav>
+            <a asp-controller="Post" asp-action="Index">Posts</a>
+            <a asp-controller="Post" asp-action="Create">Create</a>
+            <a asp-controller="Admin" asp-action="Index">Admin</a>
+        </nav>
+    </header>
+    <div class="content">
+        @RenderBody()
+    </div>
+</body>
+</html>

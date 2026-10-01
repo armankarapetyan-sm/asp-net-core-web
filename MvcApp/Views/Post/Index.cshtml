@@ -1,0 +1,27 @@
+@model IEnumerable<Post>
+@{
+    ViewData["Title"] = "Posts";
+}
+
+<h2>Posts</h2>
+@if (TempData["Ok"] != null)
+{
+    <p class="ok">@TempData["Ok"]</p>
+}
+@if (!Model.Any())
+{
+    <p>No posts yet.</p>
+}
+else
+{
+    <ul class="post-list">
+    @foreach (Post post in Model)
+    {
+        <li><strong>@post.Title</strong> — @post.Content</li>
+    }
+    </ul>
+}
+<div class="actions">
+    <a class="action" asp-action="Create">Create a post</a>
+    <email mail-to="shop@example.com">Email us</email>
+</div>

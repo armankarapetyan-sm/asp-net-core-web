@@ -1,0 +1,27 @@
+@page
+@model RazorPagesApp.Pages.Posts.IndexModel
+@{
+    ViewData["Title"] = "Posts";
+}
+
+<h2>Posts</h2>
+@if (Model.Posts.Count == 0)
+{
+    <p class="quiet">No posts yet.</p>
+}
+else
+{
+    <ul class="rows">
+    @foreach (Post post in Model.Posts)
+    {
+        <li>
+            <span><strong>@post.Title</strong> — @post.Content</span>
+            <form method="post" asp-page-handler="Delete">
+                <input type="hidden" name="id" value="@post.Id" />
+                <button class="kill" type="submit">delete</button>
+            </form>
+        </li>
+    }
+    </ul>
+}
+<p><a asp-page="/Posts/Create">Create</a></p>

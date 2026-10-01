@@ -1,0 +1,38 @@
+@page "/"
+@rendermode InteractiveServer
+@inject PostStore Store
+
+<h2>Posts</h2>
+<p class="hint">C# runs on the server. Clicks go over SignalR.</p>
+
+@if (Store.All().Count == 0)
+{
+    <p>No posts yet.</p>
+}
+else
+{
+    <div class="cards">
+        @foreach (Post post in Store.All())
+        {
+            <div class="card"><strong>@post.Title</strong><div>@post.Content</div></div>
+        }
+    </div>
+}
+
+<div class="composer">
+    <input @bind="title" placeholder="Title" />
+    <input @bind="content" placeholder="Content" />
+    <button @onclick="Add">Add</button>
+</div>
+
+@code {
+    private string title = "";
+    private string content = "";
+
+    private void Add()
+    {
+        Store.Add(new Post { Title = title, Content = content });
+        title = "";
+        content = "";
+    }
+}

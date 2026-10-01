@@ -1,0 +1,127 @@
+body {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  background: #f4f1ea;
+  color: #1c1917;
+}
+
+.site-header,
+.admin-bar {
+  display: flex;
+  align-items: center;
+  padding: 1rem 2rem;
+}
+
+.site-header {
+  background: #1a365d;
+  color: #fff;
+}
+
+.site-header strong {
+  font-size: 1.25rem;
+  letter-spacing: 0.04em;
+}
+
+.site-header nav,
+.admin-bar nav {
+  margin-left: auto;
+}
+
+.site-header a,
+.admin-bar a {
+  margin-left: 1.25rem;
+  color: #e2e8f0;
+  text-decoration: none;
+}
+
+.site-header a:hover,
+.admin-bar a:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+
+.admin-bar {
+  background: #0f172a;
+  color: #fff;
+}
+
+.content {
+  max-width: 38rem;
+  margin: 2rem auto;
+  background: #fff;
+  padding: 1.75rem 2rem;
+  border: 1px solid #e7e0d6;
+  box-shadow: 0 10px 24px rgba(26, 54, 93, 0.08);
+}
+
+h2 { margin-top: 0; color: #1a365d; }
+
+.post-list {
+  padding-left: 0;
+  list-style: none;
+}
+
+.post-list li {
+  padding: 0.85rem 0;
+  border-bottom: 1px solid #ece7df;
+}
+
+.ok {
+  background: #ecfdf5;
+  color: #065f46;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #a7f3d0;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+.content a.action,
+.content a.action:link,
+.content a.action:visited,
+.content a.action:hover {
+  display: inline-block;
+  padding: 0.55rem 1.1rem;
+  background: #1a365d;
+  color: #fff;
+  text-decoration: none;
+}
+
+.content a.action:hover { background: #0f2744; }
+
+.content a.mail,
+.content a.mail:visited {
+  color: #475569;
+  text-decoration: none;
+  border-bottom: 1px solid #94a3b8;
+}
+
+.content a.back {
+  color: #1a365d;
+}
+
+label { display: block; margin-top: 0.85rem; color: #334155; }
+
+input, textarea {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 0.3rem;
+  padding: 0.45rem 0.55rem;
+  font: inherit;
+  border: 1px solid #cbd5e1;
+}
+
+button {
+  margin-top: 1rem;
+  padding: 0.5rem 1.1rem;
+  background: #1a365d;
+  color: #fff;
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+}

@@ -1,0 +1,7 @@
+<RouteView RouteData="RouteData" DefaultLayout="typeof(MainLayout)" />
+<FocusOnNavigate RouteData="RouteData" Selector="h1" />
+
+@code {
+    [Parameter]
+    public RouteData RouteData { get; set; } = default!;
+}

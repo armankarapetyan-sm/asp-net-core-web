@@ -1,0 +1,14 @@
+@model Post
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h2>Create post</h2>
+<form asp-action="Create" method="post">
+    <label>Title</label>
+    <input asp-for="Title" />
+    <label>Content</label>
+    <textarea asp-for="Content"></textarea>
+    <button type="submit">Save</button>
+</form>
+<p><a class="back" asp-action="Index">Back</a></p>
