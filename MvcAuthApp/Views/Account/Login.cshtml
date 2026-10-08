@@ -1,0 +1,37 @@
+@model LoginForm
+@inject IOptions<CookieSettings> CookieConfig
+@{
+    ViewData["Title"] = "Log in";
+}
+
+<h2>Log in</h2>
+@if (ViewData["Error"] != null)
+{
+    <p class="alert">@ViewData["Error"]</p>
+}
+<form method="post">
+    <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
+    <label>User name</label>
+    <input asp-for="UserName" autocomplete="username" />
+    <label>Password</label>
+    <input asp-for="Password" type="password" autocomplete="current-password" />
+    <label class="tick">
+        <input asp-for="RememberMe" />
+        Remember me (@CookieConfig.Value.Auth.RememberMeDays days). Skip this on a shared PC.
+    </label>
+    <button class="btn-go" type="submit">Log in</button>
+</form>
+<p><a asp-action="Register">Register a new reader</a> · <a asp-action="Token">Get a Bearer token</a></p>
+
+<h3>Mock users</h3>
+<table class="hint-table">
+    <tr><th>User</th><th>Password</th><th>Role</th></tr>
+    @foreach (DemoPerson person in DemoPeople.Seed)
+    {
+        <tr>
+            <td>@person.UserName</td>
+            <td>@person.Password</td>
+            <td>@person.Role</td>
+        </tr>
+    }
+</table>

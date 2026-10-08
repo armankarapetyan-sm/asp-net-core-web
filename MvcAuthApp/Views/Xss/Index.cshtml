@@ -1,0 +1,133 @@
+@model XssPage
+@inject IOptions<CookieSettings> CookieConfig
+@{
+    ViewData["Title"] = "XSS wall";
+    ViewData["Wide"] = true;
+    AuthCookieSettings authCookie = CookieConfig.Value.Auth;
+    OpenNoteCookieSettings openNote = CookieConfig.Value.OpenNote;
+}
+<script>
+    if (!localStorage.getItem("demoToken")) {
+        localStorage.setItem("demoToken", "not-a-login-but-js-can-read-me");
+    }
+    window.showStolen = function () {
+        var box = document.getElementById("loot");
+        if (!box) {
+            return;
+        }
+        var lines = [];
+        lines.push("document.cookie = " + document.cookie);
+        lines.push("localStorage.theme = " + (localStorage.getItem("theme") || "(none)"));
+        lines.push("localStorage.demoToken = " + (localStorage.getItem("demoToken") || "(none)"));
+        lines.push("sessionStorage.lastPath = " + (sessionStorage.getItem("lastPath") || "(none)"));
+        lines.push("");
+        lines.push("@authCookie.Name is missing from document.cookie — HttpOnly.");
+        box.textContent = lines.join("\n");
+        var flag = document.getElementById("xss-flag");
+        if (flag) {
+            flag.hidden = false;
+        }
+    };
+</script>
+
+<h2>XSS on a wall</h2>
+<p>Same notes, two printers. Left encodes (Razor default). Right prints HTML as HTML (<code>Html.Raw</code>). That is the bug.</p>
+<p class="muted">This page also drops a cookie named <code>@openNote.Name</code> <em>without</em> HttpOnly, and a <code>demoToken</code> in localStorage. Those are the bait. The login cookie stays HttpOnly, so it will not show up in the stolen box.</p>
+
+<div class="split">
+    <form asp-action="Post" method="post">
+        <label>
+            Open note — stored as typed
+            <textarea asp-for="Form.Body" rows="3" placeholder="Tags stay tags. The raw column will run them."></textarea>
+        </label>
+        <button class="btn-go" type="submit">Post open</button>
+    </form>
+    <div>
+        <form asp-action="Demo" method="post">
+            <button class="btn-go" type="submit">Post the demo XSS</button>
+        </form>
+        <form asp-action="Clear" method="post">
+            <button class="linkish dark" type="submit">Clear wall</button>
+        </form>
+        <p class="muted">The demo is an image with <code>onerror</code>. Open + raw: the handler runs. Protected + raw: it stays text.</p>
+    </div>
+</div>
+
+<div class="panel panel-safe">
+    <form asp-action="PostSafe" method="post">
+        <label>
+            Protected note — encoded before save
+            <textarea asp-for="Form.Body" rows="3" placeholder="Type the same HTML. The server turns &lt; into &amp;lt; first."></textarea>
+        </label>
+        <button class="btn-go" type="submit">Post protected</button>
+    </form>
+    <form asp-action="DemoSafe" method="post">
+        <button class="linkish dark" type="submit">Post the demo XSS as protected</button>
+    </form>
+    <p class="muted">This box uses <code>HtmlEncoder.Default.Encode</code> on the way in. Even <code>Html.Raw</code> later cannot rebuild a tag from <code>&amp;lt;img</code>.</p>
+</div>
+
+<h3>Attacker inbox</h3>
+<p class="muted">Empty until a script from the <em>right</em> column runs. Same page only — nothing is sent away.</p>
+<pre id="loot">nothing stolen yet</pre>
+<p id="xss-flag" class="alert" hidden>A script from a comment ran in your browser.</p>
+
+<div class="split">
+    <section>
+        <h3>Encoded — safe</h3>
+        <ul class="items">
+        @foreach (WallNoteView note in Model.Notes)
+        {
+            <li>
+                <span class="muted">@note.Author</span>
+                @if (note.ProtectedSave)
+                {
+                    <span class="chip">protected</span>
+                }
+                <div>@note.Body</div>
+            </li>
+        }
+        </ul>
+    </section>
+    <section>
+        <h3>Raw — XSS</h3>
+        <ul class="items">
+        @foreach (WallNoteView note in Model.Notes)
+        {
+            <li>
+                <span class="muted">@note.Author</span>
+                @if (note.ProtectedSave)
+                {
+                    <span class="chip">protected</span>
+                }
+                <div>@Html.Raw(note.Body)</div>
+            </li>
+        }
+        </ul>
+    </section>
+</div>
+
+<h3>What the script can take</h3>
+<table class="hint-table">
+    <tr><th>Thing</th><th>In the stolen box?</th></tr>
+    <tr>
+        <td><code>@authCookie.Name</code> login cookie (HttpOnly)</td>
+        <td>No. <code>document.cookie</code> cannot see it.</td>
+    </tr>
+    <tr>
+        <td><code>@openNote.Name</code> (no HttpOnly)</td>
+        <td>Yes. That is a cookie you forgot to lock.</td>
+    </tr>
+    <tr>
+        <td><code>demoToken</code> in localStorage</td>
+        <td>Yes. Always readable. Do not put a login ticket here.</td>
+    </tr>
+    <tr>
+        <td><code>theme</code> / <code>lastPath</code></td>
+        <td>Yes. Harmless here. Same API as a token.</td>
+    </tr>
+</table>
+
+<h3>How the protected box stops it</h3>
+<pre>&lt;  →  &amp;lt;     &gt;  →  &amp;gt;     &quot;  →  &amp;quot;</pre>
+<p>The parser never sees a real tag, so <code>onerror</code> does not run. Everyday fix: Razor <code>@@note.Body</code> (left column). This box also encodes on save, so even <code>Html.Raw</code> is harmless. HttpOnly hides <code>@authCookie.Name</code>; it does not stop a script from running.</p>

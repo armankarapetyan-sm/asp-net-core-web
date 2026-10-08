@@ -1,0 +1,15 @@
+@model PostForm
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h2>Create post</h2>
+<p class="muted">Policy <code>CanWritePosts</code> needs Editor or Admin plus <code>posts.write</code>.</p>
+<form asp-action="Create" method="post">
+    <label>Title</label>
+    <input asp-for="Title" />
+    <label>Content</label>
+    <textarea asp-for="Content"></textarea>
+    <button class="btn-go" type="submit">Save</button>
+</form>
+<p><a asp-action="Index">Back</a></p>

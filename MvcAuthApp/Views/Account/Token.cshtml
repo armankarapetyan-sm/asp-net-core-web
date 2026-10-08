@@ -1,0 +1,29 @@
+@model TokenForm
+@{
+    ViewData["Title"] = "Token";
+    TokenResponse? issued = ViewData["Issued"] as TokenResponse;
+}
+
+<h2>Bearer token</h2>
+<p>For Swagger and <code>/api</code>. A page click cannot send this header. Do not put the token in localStorage.</p>
+
+@if (ViewData["Error"] != null)
+{
+    <p class="alert">@ViewData["Error"]</p>
+}
+<form method="post">
+    <label>User name</label>
+    <input asp-for="UserName" autocomplete="username" />
+    <label>Password</label>
+    <input asp-for="Password" type="password" autocomplete="current-password" />
+    <button class="btn-go" type="submit">Issue token</button>
+</form>
+
+@if (issued != null)
+{
+    <h3>Issued for @issued.Name <span class="chip">@issued.Role</span></h3>
+    <p class="muted">Expires @issued.ExpiresUtc.UtcDateTime.ToString("u"). Swagger → Authorize → Bearer → paste the token only.</p>
+    <textarea rows="6" readonly>@issued.AccessToken</textarea>
+}
+
+<p><a asp-action="Login">HTML login (cookie)</a></p>

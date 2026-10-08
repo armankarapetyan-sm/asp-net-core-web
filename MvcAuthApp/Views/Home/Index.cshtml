@@ -1,0 +1,50 @@
+@inject IOptions<CookieSettings> CookieConfig
+@{
+    ViewData["Title"] = "Home";
+    AuthCookieSettings authCookieSettings = CookieConfig.Value.Auth;
+    string? authCookie = Context.Request.Cookies[authCookieSettings.Name];
+}
+
+<h2>Cookie login in a web app</h2>
+<p>Authentication is who you are. Authorization is whether you may be here. The cookie remembers the first. Policies decide the second.</p>
+
+@if (User.Identity != null && User.Identity.IsAuthenticated)
+{
+    <div class="panel">
+        <p>Signed in as <strong>@User.Identity.Name</strong>
+            <span class="chip">@User.FindFirstValue(ClaimTypes.Role)</span>
+            @foreach (Claim claim in User.FindAll(AppScopes.ClaimType))
+            {
+                <span class="chip">@claim.Value</span>
+            }
+        </p>
+    </div>
+}
+else
+{
+    <p class="muted">Not signed in. Posts need <code>posts.read</code>.</p>
+}
+
+<h3>In this browser</h3>
+<table class="hint-table">
+    <tr><th>Where</th><th>Name</th><th>Now</th></tr>
+    <tr><td>Cookie (HttpOnly)</td><td><code>@authCookieSettings.Name</code></td><td>@(authCookie == null ? "missing" : "present — JS cannot read it")</td></tr>
+    <tr><td>localStorage</td><td><code>theme</code></td><td id="theme-now">…</td></tr>
+    <tr><td>sessionStorage</td><td><code>lastPath</code></td><td id="last-path">…</td></tr>
+</table>
+
+<h3>Proofs</h3>
+<table class="hint-table">
+    <tr><th>Person</th><th>Password</th><th>Role</th></tr>
+    @foreach (DemoPerson person in DemoPeople.Seed)
+    {
+        <tr>
+            <td>@person.UserName</td>
+            <td>@person.Password</td>
+            <td>@person.Role</td>
+        </tr>
+    }
+</table>
+<p>Pages use the cookie. <a href="~/swagger">Swagger</a> uses a <a asp-controller="Account" asp-action="Token">Bearer token</a>. Log out before you test Bearer. Do not put a JWT in localStorage.</p>
+<p class="muted">Users, posts, and the XSS wall live in SQLite. Restart keeps them.</p>
+<p class="muted"><a asp-controller="Xss" asp-action="Index">XSS wall</a> — encoded vs raw. <a asp-controller="Xss" asp-action="Lab">XSS lab</a> — steal cookies, saved passwords, and the staff roster.</p>

@@ -1,0 +1,19 @@
+@model RegisterForm
+@{
+    ViewData["Title"] = "Register";
+}
+
+<h2>Register</h2>
+<p class="muted">New accounts get the Reader role and the <code>posts.read</code> scope.</p>
+@if (ViewData["Error"] != null)
+{
+    <p class="alert">@ViewData["Error"]</p>
+}
+<form method="post">
+    <label>User name</label>
+    <input asp-for="UserName" autocomplete="username" />
+    <label>Password</label>
+    <input asp-for="Password" type="password" autocomplete="new-password" />
+    <button class="btn-go" type="submit">Create account</button>
+</form>
+<p><a asp-action="Login">Back to log in</a></p>

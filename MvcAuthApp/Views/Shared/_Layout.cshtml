@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] — Auth</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <script>
+        (function () {
+            var theme = localStorage.getItem("theme");
+            if (theme) {
+                document.documentElement.setAttribute("data-theme", theme);
+            }
+        })();
+    </script>
+</head>
+<body>
+    <header class="topbar">
+        <strong>Auth MVC</strong>
+        <nav>
+            <a asp-controller="Home" asp-action="Index">Home</a>
+            <a asp-controller="Post" asp-action="Index">Posts</a>
+            <a asp-controller="Xss" asp-action="Index">XSS wall</a>
+            <a asp-controller="Xss" asp-action="Lab">XSS lab</a>
+            <a href="~/swagger">Swagger</a>
+            <a asp-controller="Account" asp-action="Token">Token</a>
+            @if (User.HasClaim(AppScopes.ClaimType, AppScopes.PostsWrite))
+            {
+                <a asp-controller="Post" asp-action="Create">Create</a>
+            }
+            @if (User.IsInRole(AppRoles.Admin))
+            {
+                <a asp-controller="Admin" asp-action="Index">Admin</a>
+            }
+        </nav>
+        <div class="who">
+            <button class="linkish" type="button" id="theme-toggle">Theme</button>
+            @if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                <span>@User.Identity.Name</span>
+                <span class="chip">@User.FindFirstValue(ClaimTypes.Role)</span>
+                <form asp-controller="Account" asp-action="Logout" method="post">
+                    <button class="linkish" type="submit">Log out</button>
+                </form>
+            }
+            else
+            {
+                <a asp-controller="Account" asp-action="Login">Log in</a>
+                <a asp-controller="Account" asp-action="Register">Register</a>
+            }
+        </div>
+    </header>
+    <div class="wrap@(ViewData["Wide"] != null ? " wrap-wide" : "")">
+        @RenderBody()
+    </div>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+</body>
+</html>

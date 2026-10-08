@@ -1,0 +1,21 @@
+@model IReadOnlyList<PostView>
+@{
+    ViewData["Title"] = "Posts";
+}
+
+<h2>Posts</h2>
+<p class="muted">Policy <code>CanReadPosts</code> needs <code>posts.read</code>. Edit is resource-based (author or Admin).</p>
+<ul class="items">
+@foreach (PostView post in Model)
+{
+    <li>
+        <strong>@post.Title</strong> — @post.Content
+        <span class="muted">by @post.Author</span>
+        <a asp-action="Edit" asp-route-id="@post.Id">edit</a>
+    </li>
+}
+</ul>
+@if (User.HasClaim(AppScopes.ClaimType, AppScopes.PostsWrite))
+{
+    <p><a class="btn-go" asp-action="Create">Create a post</a></p>
+}

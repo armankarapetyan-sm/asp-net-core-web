@@ -1,0 +1,16 @@
+@{
+    ViewData["Title"] = "No access";
+}
+
+<div class="deny-box">
+    <h2>I don't have access</h2>
+    <p>You are signed in, but your role or scopes do not match the policy on that page.</p>
+    <p>
+        @if (User.Identity != null && User.Identity.IsAuthenticated)
+        {
+            <span>Current user: <strong>@User.Identity.Name</strong></span>
+            <span class="chip">@User.FindFirstValue(ClaimTypes.Role)</span>
+        }
+    </p>
+    <p><a asp-controller="Home" asp-action="Index">Home</a></p>
+</div>

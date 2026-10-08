@@ -1,0 +1,19 @@
+@model IReadOnlyList<UserPublic>
+@{
+    ViewData["Title"] = "Admin";
+}
+
+<h2>Users</h2>
+<p class="muted">Policy <code>CanManageUsers</code> needs Admin plus <code>users.manage</code>.</p>
+<p><a asp-action="RolesOnly">Page that uses only <code>[Authorize(Roles = "Admin")]</code></a></p>
+<table class="hint-table">
+    <tr><th>User</th><th>Role</th><th>Scopes</th></tr>
+    @foreach (UserPublic user in Model)
+    {
+        <tr>
+            <td>@user.UserName</td>
+            <td>@user.Role</td>
+            <td>@(user.Scopes.Count == 0 ? "—" : string.Join(", ", user.Scopes))</td>
+        </tr>
+    }
+</table>

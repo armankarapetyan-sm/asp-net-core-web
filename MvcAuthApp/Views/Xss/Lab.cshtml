@@ -1,0 +1,72 @@
+@model XssLabPage
+@inject IOptions<CookieSettings> CookieConfig
+@{
+    ViewData["Title"] = "XSS lab";
+    ViewData["Wide"] = true;
+    AuthCookieSettings authCookie = CookieConfig.Value.Auth;
+    OpenNoteCookieSettings openNote = CookieConfig.Value.OpenNote;
+}
+<script>
+    localStorage.setItem("savedEmail", "editor@shop.test");
+    localStorage.setItem("savedPassword", "editor123");
+    localStorage.setItem("adminApiKey", "sk_live_classroom");
+</script>
+
+<h2>XSS lab — steal what the victim can see</h2>
+<p>An attacker posts a comment. You open the page. The comment runs <em>as you</em>. Cookies without HttpOnly, localStorage, and anything in the HTML are fair game. The login cookie <code>@authCookie.Name</code> is HttpOnly, so it will not appear in the loot.</p>
+<p class="muted">This page plants bait: cookie <code>@CookieNames.SavedLogin</code> (editor’s password), cookie <code>@openNote.Name</code>, and localStorage keys for editor’s email/password plus an API key.</p>
+
+<h3>Staff roster — in the HTML</h3>
+<p class="muted">Looks private. It is still in the document. A script can copy the table.</p>
+<table class="hint-table" id="private-roster">
+    <tr><th>User</th><th>Email</th><th>Password</th></tr>
+    @foreach (DemoPerson person in DemoPeople.Seed)
+    {
+        <tr>
+            <td>@person.UserName</td>
+            <td>@(person.UserName + "@shop.test")</td>
+            <td>@person.Password</td>
+        </tr>
+    }
+</table>
+
+<h3>What the attacker inserts</h3>
+<p class="muted">Each button posts that HTML as a guestbook comment. The guestbook below prints it with <code>Html.Raw</code>.</p>
+<div class="attack-grid">
+@foreach (XssLabAttack attack in Model.Attacks)
+{
+    <div class="panel">
+        <h3>@attack.Title</h3>
+        <p class="muted">@attack.Hint</p>
+        <pre class="payload">@attack.Html</pre>
+        <form asp-action="Attack" method="post">
+            <input type="hidden" name="kind" value="@attack.Kind" />
+            <button class="btn-go" type="submit">Insert this</button>
+        </form>
+    </div>
+}
+</div>
+
+<form asp-action="Reset" method="post">
+    <button class="linkish dark" type="submit">Reset lab</button>
+</form>
+
+<h3>Attacker inbox</h3>
+<p class="muted">Filled by script from a comment. Same page only — nothing is sent away.</p>
+<pre id="loot">@(Model.Cleared ? "cleared" : "nothing stolen yet")</pre>
+<p id="xss-flag" class="alert" hidden>A guestbook script ran in this browser.</p>
+
+<h3>Guestbook — raw</h3>
+<ul class="items">
+@if (Model.Comments.Count == 0)
+{
+    <li class="muted">No comments. Insert an attack above.</li>
+}
+@foreach (WallNoteView note in Model.Comments)
+{
+    <li>
+        <span class="muted">@note.Author</span>
+        <div>@Html.Raw(note.Body)</div>
+    </li>
+}
+</ul>
